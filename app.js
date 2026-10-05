@@ -108,3 +108,63 @@ function submitGuess() {
         endRound(false);
     }
 }
+
+// ===========================================================
+// CLUE GENERATION
+// ===========================================================
+function buildClues(guess) {
+    const clues = [];
+
+    // State of matter
+    const stateMatch = guess.physicalProperties.state === secretCompound.physicalProperties.state;
+    clues.push({
+        label: "State",
+        value: guess.physicalProperties.state,
+        tier: stateMatch ? "hit" : "miss"
+    });
+
+    // Compound type
+    const typeMatch = guess.compoundType === secretCompound.compoundType;
+    clues.push({
+        label: "Type",
+        value: guess.compoundType,
+        tier: typeMatch ? "hit" : "miss"
+    });
+
+    // Molar mass
+    const guessMass = guess.physicalProperties.molarMass;
+    const secretMass = secretCompound.physicalProperties.molarMass;
+    clues.push(buildMolarMassClue(guessMass, secretMass));
+
+    // Hazard level (count of true safety flags)
+    const guessHazard = hazardCount(guess.safetyData);
+    const secretHazard = hazardCount(secretCompound.safetyData);
+    clues.push(buildHazardClue(guessHazard, secretHazard));
+
+    return clues;
+}
+
+function buildMolarMassClue(guessMass, secretMass) {
+    if (guessMass === secretMass) {
+        return { label: "Molar mass", value: `${guessMass} g/mol`, tier: "hit" };
+    }
+
+    const percentDiff = Math.abs(guessMass - secretMass) / secretMass;
+    const arrow = guessMass < secretMass ? "\u2191" : "\u2193"; // arrow points toward the answer
+    const tier = percentDiff <= MOLAR_MASS_CLOSE_THRESHOLD ? "close" : "miss";
+
+    return { label: "Molar mass", value: `${guessMass} g/mol ${arrow}`, tier };
+}
+
+function hazardCount(safetyData) {
+    return [safetyData.isCorrosive, safetyData.isFlammable, safetyData.isToxic]
+        .filter(Boolean).length;
+}
+
+function buildHazardClue(guessHazard, secretHazard) {
+    if (guessHazard === secretHazard) {
+        return { label: "Hazard level", value: `${guessHazard}/3`, tier: "hit" };
+    }
+    const arrow = guessHazard < secretHazard ? "\u2191" : "\u2193";
+    return { label: "Hazard level", value: `${guessHazard}/3 ${arrow}`, tier: "miss" };
+}
