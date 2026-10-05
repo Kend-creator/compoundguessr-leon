@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompoundGuessr</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-inner">
+            <h1>Compound<span class="title-accent">Guessr</span></h1>
+            <p class="subtitle">Guess the mystery compound in 5 tries. Each guess reveals clues.</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="guess-panel">
+            <div class="guesses-left" id="guessesLeft">5 guesses left</div>
+
+            <div class="guess-input-row">
+                <input
+                    type="text"
+                    id="guessInput"
+                    list="compoundNames"
+                    placeholder="Type a compound name..."
+                    autocomplete="off"
+                >
+                <datalist id="compoundNames"></datalist>
+                <button id="submitGuessBtn">Guess</button>
+            </div>
+            <p id="guessError" class="guess-error"></p>
+
+            <div class="clue-legend">
+                <span><span class="legend-dot hit"></span> Match</span>
+                <span><span class="legend-dot close"></span> Close</span>
+                <span><span class="legend-dot miss"></span> No match</span>
+            </div>
+
+            <div id="guessHistory" class="guess-history"></div>
+        </section>
+
+        <section id="roundEndPanel" class="round-end-panel" hidden>
+            <div id="roundEndContent"></div>
+            <button id="playAgainBtn" class="primary">Play again</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by the Simple Compound Element API &middot; CompoundGuessr v1.0.0</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
