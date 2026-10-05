@@ -1,0 +1,276 @@
+/* ---------------------------------------------
+   Tokens
+--------------------------------------------- */
+:root {
+    --bg: #121014;
+    --panel: #1c1920;
+    --panel-2: #262128;
+    --line: #322c35;
+    --text: #f2ede6;
+    --text-dim: #8c8580;
+
+    --hit: #3f9142;
+    --hit-bg: #1b2e1c;
+    --close: #c9942f;
+    --close-bg: #2e2515;
+    --miss: #4a4550;
+    --miss-bg: #221f25;
+
+    --font-display: "Archivo Narrow", "Segoe UI", Arial, sans-serif;
+    --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+body {
+    font-family: var(--font-body);
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* ---------------------------------------------
+   Header
+--------------------------------------------- */
+header {
+    padding: 44px 20px 30px;
+    border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2.6em;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+}
+
+.title-accent {
+    color: var(--close);
+}
+
+.subtitle {
+    margin: 8px 0 0;
+    color: var(--text-dim);
+    font-size: 0.98em;
+}
+
+/* ---------------------------------------------
+   Layout
+--------------------------------------------- */
+main {
+    max-width: 640px;
+    margin: 36px auto;
+    padding: 0 20px;
+}
+
+/* ---------------------------------------------
+   Guess panel
+--------------------------------------------- */
+.guesses-left {
+    font-family: var(--font-display);
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--close);
+}
+
+.guess-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+#guessInput {
+    flex: 1;
+    padding: 13px 14px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--text);
+}
+
+#guessInput::placeholder {
+    color: var(--text-dim);
+}
+
+#guessInput:focus,
+button:focus-visible {
+    outline: 2px solid var(--close);
+    outline-offset: 1px;
+}
+
+button {
+    padding: 13px 22px;
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--close);
+    color: #1a1508;
+    transition: background 0.12s ease;
+}
+
+button:hover {
+    background: #dba943;
+}
+
+button.primary {
+    background: var(--hit);
+    color: #0e1c0f;
+    font-size: 1.02em;
+    padding: 14px 24px;
+}
+
+button.primary:hover {
+    background: #4fab53;
+}
+
+.guess-error {
+    min-height: 1.3em;
+    color: #d9695a;
+    font-size: 0.86em;
+    margin: 8px 2px 0;
+}
+
+.clue-legend {
+    display: flex;
+    gap: 18px;
+    margin: 20px 0 18px;
+    font-size: 0.82em;
+    color: var(--text-dim);
+}
+
+.clue-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.legend-dot.hit { background: var(--hit); }
+.legend-dot.close { background: var(--close); }
+.legend-dot.miss { background: var(--miss); }
+
+/* ---------------------------------------------
+   Guess history
+--------------------------------------------- */
+.guess-history {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.guess-row {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 14px 16px;
+}
+
+.guess-row-name {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.clue-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.clue-tile {
+    padding: 10px 8px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.clue-tile .clue-label {
+    display: block;
+    font-size: 0.68em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+    margin-bottom: 3px;
+}
+
+.clue-tile .clue-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95em;
+}
+
+.clue-tile.hit { background: var(--hit-bg); color: var(--hit); }
+.clue-tile.close { background: var(--close-bg); color: var(--close); }
+.clue-tile.miss { background: var(--miss-bg); color: var(--text-dim); }
+
+/* ---------------------------------------------
+   Round end panel
+--------------------------------------------- */
+.round-end-panel {
+    margin-top: 28px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 28px;
+    text-align: center;
+}
+
+.round-end-title {
+    font-family: var(--font-display);
+    font-size: 1.6em;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.round-end-title.win { color: var(--hit); }
+.round-end-title.lose { color: #d9695a; }
+
+.round-end-formula {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.round-end-description {
+    color: var(--text-dim);
+    font-size: 0.92em;
+    margin: 10px 0 20px;
+    line-height: 1.5;
+}
+
+/* ---------------------------------------------
+   Footer
+--------------------------------------------- */
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-dim);
+    font-size: 0.82em;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+}
