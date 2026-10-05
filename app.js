@@ -168,3 +168,61 @@ function buildHazardClue(guessHazard, secretHazard) {
     const arrow = guessHazard < secretHazard ? "\u2191" : "\u2193";
     return { label: "Hazard level", value: `${guessHazard}/3 ${arrow}`, tier: "miss" };
 }
+
+// ===========================================================
+// RENDER A GUESS ROW
+// ===========================================================
+function renderGuessRow(guessedCompound) {
+    const clues = buildClues(guessedCompound);
+    const history = document.getElementById("guessHistory");
+
+    const row = document.createElement("div");
+    row.className = "guess-row";
+
+    const tilesHtml = clues.map(clue => `
+        <div class="clue-tile ${clue.tier}">
+            <span class="clue-label">${clue.label}</span>
+            <span class="clue-value">${clue.value}</span>
+        </div>
+    `).join("");
+
+    row.innerHTML = `
+        <div class="guess-row-name">${guessedCompound.name} (${guessedCompound.formula})</div>
+        <div class="clue-tiles">${tilesHtml}</div>
+    `;
+
+    history.prepend(row);
+}
+
+// ===========================================================
+// END OF ROUND
+// ===========================================================
+function endRound(won) {
+    roundOver = true;
+    document.getElementById("guessInput").disabled = true;
+    document.getElementById("submitGuessBtn").disabled = true;
+
+    const panel = document.getElementById("roundEndPanel");
+    const content = document.getElementById("roundEndContent");
+
+    content.innerHTML = `
+        <p class="round-end-title ${won ? "win" : "lose"}">${won ? "Solved it!" : "Out of guesses"}</p>
+        <p class="round-end-formula">${secretCompound.name} (${secretCompound.formula})</p>
+        <p class="round-end-description">${secretCompound.description}</p>
+    `;
+
+    panel.hidden = false;
+}
+
+// ===========================================================
+// EVENT WIRING
+// ===========================================================
+document.getElementById("submitGuessBtn").addEventListener("click", submitGuess);
+
+document.getElementById("guessInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitGuess();
+});
+
+document.getElementById("playAgainBtn").addEventListener("click", startNewRound);
+
+init();
