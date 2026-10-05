@@ -63,3 +63,48 @@ function updateGuessesLeft() {
     document.getElementById("guessesLeft").textContent =
         `${guessesRemaining} guess${guessesRemaining === 1 ? "" : "es"} left`;
 }
+
+// ===========================================================
+// SUBMIT A GUESS
+// ===========================================================
+function submitGuess() {
+    if (roundOver) return;
+
+    const input = document.getElementById("guessInput");
+    const guessName = input.value.trim();
+    const errorEl = document.getElementById("guessError");
+
+    if (!guessName) return;
+
+    const guessedCompound = allCompounds.find(
+        c => c.name.toLowerCase() === guessName.toLowerCase()
+    );
+
+    if (!guessedCompound) {
+        errorEl.textContent = "Not a recognized compound name. Pick one from the list.";
+        return;
+    }
+
+    if (guessedNames.has(guessedCompound.name)) {
+        errorEl.textContent = "You already guessed that one.";
+        return;
+    }
+
+    errorEl.textContent = "";
+    guessedNames.add(guessedCompound.name);
+    guessesRemaining -= 1;
+
+    renderGuessRow(guessedCompound);
+    input.value = "";
+
+    if (guessedCompound.id === secretCompound.id) {
+        endRound(true);
+        return;
+    }
+
+    updateGuessesLeft();
+
+    if (guessesRemaining <= 0) {
+        endRound(false);
+    }
+}
