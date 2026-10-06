@@ -12,14 +12,14 @@ let guessedNames = new Set();
 let roundOver = false;
 
 // ===========================================================
-// LOAD DATA & START
+// LOAD DATA & START ROUND
 // ===========================================================
 async function init() {
     try {
         const response = await fetch(`${API_URL}/api/v1/compounds`, FETCH_OPTIONS);
         if (!response.ok) throw new Error("API request failed.");
         const data = await response.json();
-        allCompounds = data.compounds;
+        allCompounds = data.compounds; // saves data to the allCompounds variable
 
         populateNameList(allCompounds);
         startNewRound();
@@ -31,10 +31,10 @@ async function init() {
     }
 }
 
-function populateNameList(compounds) {
+function populateNameList(compounds) { 
     const datalist = document.getElementById("compoundNames");
-    datalist.innerHTML = "";
-    compounds.forEach(c => {
+    datalist.innerHTML = ""; // datalist creation
+    compounds.forEach(c => { // loops through the compounds and creates an option element for each compound name, then appends it to the datalist
         const option = document.createElement("option");
         option.value = c.name;
         datalist.appendChild(option);
@@ -45,24 +45,24 @@ function populateNameList(compounds) {
 // ROUND MANAGEMENT
 // ===========================================================
 function startNewRound() {
-    secretCompound = allCompounds[Math.floor(Math.random() * allCompounds.length)];
+    secretCompound = allCompounds[Math.floor(Math.random() * allCompounds.length)]; // picks a random compound from the allCompounds array
     guessesRemaining = MAX_GUESSES;
     guessedNames = new Set();
-    roundOver = false;
+    roundOver = false; // resets the state variables
 
-    document.getElementById("guessHistory").innerHTML = "";
+    document.getElementById("guessHistory").innerHTML = ""; // reset the UI
     document.getElementById("guessError").textContent = "";
     document.getElementById("guessInput").value = "";
     document.getElementById("guessInput").disabled = false;
     document.getElementById("submitGuessBtn").disabled = false;
-    document.getElementById("roundEndPanel").hidden = true;
+    document.getElementById("roundEndPanel").hidden = true; // hides the end panel
     updateGuessesLeft();
-    renderHint();    
+    renderHint(); // renders the hint for the new round
 }
 
 function updateGuessesLeft() {
     document.getElementById("guessesLeft").textContent =
-        `${guessesRemaining} guess${guessesRemaining === 1 ? "" : "es"} left`;
+        `${guessesRemaining} guess${guessesRemaining === 1 ? "" : "es"} left`; // updates the remaining guesses
 }
 
 // ===========================================================
@@ -72,7 +72,7 @@ function escapeRegExp(text) {
     return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Blanks out the compound's own name and formula so the hint can't give it away
+// blanks out the compound's own name and formula so the hint can't give it away
 function maskAnswer(text, compound) {
     const blank = "\u2588\u2588\u2588\u2588\u2588";
     const nameRegex = new RegExp(escapeRegExp(compound.name), "gi");
@@ -93,7 +93,7 @@ function renderHint() {
 function submitGuess() {
     if (roundOver) return;
 
-    const input = document.getElementById("guessInput");
+    const input = document.getElementById("guessInput"); 
     const guessName = input.value.trim();
     const errorEl = document.getElementById("guessError");
 
@@ -159,10 +159,8 @@ function buildClues(guess) {
     const secretMass = secretCompound.physicalProperties.molarMass;
     clues.push(buildMolarMassClue(guessMass, secretMass));
 
-    // Hazard level (count of true safety flags)
-    const guessHazard = hazardCount(guess.safetyData);
-    const secretHazard = hazardCount(secretCompound.safetyData);
-    clues.push(buildHazardClue(guessHazard, secretHazard));
+    // Elements shared with the secret compound
+    clues.push(buildElementsClue(guess));
 
     return clues;
 }
@@ -184,12 +182,25 @@ function hazardCount(safetyData) {
         .filter(Boolean).length;
 }
 
-function buildHazardClue(guessHazard, secretHazard) {
-    if (guessHazard === secretHazard) {
-        return { label: "Hazard level", value: `${guessHazard}/3`, tier: "hit" };
+function buildElementsClue(guess) {
+    const guessSymbols = guess.composition.map(c => c.symbol);
+    const secretSymbols = secretCompound.composition.map(c => c.symbol);
+
+    // Symbols that appear in both compounds
+    const shared = guessSymbols.filter(symbol => secretSymbols.includes(symbol));
+
+    // Same elements in both = every guessed element is shared AND the counts match
+    const exactMatch =
+        shared.length === guessSymbols.length &&
+        shared.length === secretSymbols.length;
+
+    if (exactMatch) {
+        return { label: "Elements", value: shared.join(", "), tier: "hit" };
     }
-    const arrow = guessHazard < secretHazard ? "\u2191" : "\u2193";
-    return { label: "Hazard level", value: `${guessHazard}/3 ${arrow}`, tier: "miss" };
+    if (shared.length > 0) {
+        return { label: "Elements", value: shared.join(", "), tier: "close" };
+    }
+    return { label: "Elements", value: "None", tier: "miss" };
 }
 
 // ===========================================================
