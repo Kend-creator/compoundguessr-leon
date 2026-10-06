@@ -3,7 +3,7 @@ const API_KEY = "student-api-key-123";
 const FETCH_OPTIONS = { headers: { "x-api-key": API_KEY } };
 
 const MAX_GUESSES = 5;
-const MOLAR_MASS_CLOSE_THRESHOLD = 0.15; // 15%
+const MOLAR_MASS_CLOSE_THRESHOLD = 0.15; 
 
 let allCompounds = [];
 let secretCompound = null;
@@ -57,11 +57,34 @@ function startNewRound() {
     document.getElementById("submitGuessBtn").disabled = false;
     document.getElementById("roundEndPanel").hidden = true;
     updateGuessesLeft();
+    renderHint();    
 }
 
 function updateGuessesLeft() {
     document.getElementById("guessesLeft").textContent =
         `${guessesRemaining} guess${guessesRemaining === 1 ? "" : "es"} left`;
+}
+
+// ===========================================================
+// HINT
+// ===========================================================
+function escapeRegExp(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Blanks out the compound's own name and formula so the hint can't give it away
+function maskAnswer(text, compound) {
+    const blank = "\u2588\u2588\u2588\u2588\u2588";
+    const nameRegex = new RegExp(escapeRegExp(compound.name), "gi");
+    const formulaRegex = new RegExp(
+        `(?<![A-Za-z0-9])${escapeRegExp(compound.formula)}(?![A-Za-z0-9])`, "g"
+    );
+    return text.replace(nameRegex, blank).replace(formulaRegex, blank);
+}
+
+function renderHint() {
+    document.getElementById("hintText").textContent =
+        maskAnswer(secretCompound.description, secretCompound);
 }
 
 // ===========================================================

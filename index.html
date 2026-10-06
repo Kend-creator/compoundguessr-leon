@@ -12,16 +12,19 @@
 </head>
 
 <body>
-    <header>
-        <div class="header-inner">
-            <h1>Compound<span class="title-accent">Guessr</span></h1>
-            <p class="subtitle">Guess the mystery compound in 5 tries. Each guess reveals clues.</p>
-        </div>
-    </header>
+    <div class="topbar">
+        <span class="topbar-title">CompoundGuessr</span>
+        <span class="topbar-counter" id="guessesLeft">5 guesses left</span>
+    </div>
 
-    <main>
-        <section class="guess-panel">
-            <div class="guesses-left" id="guessesLeft">5 guesses left</div>
+    <main class="stage">
+        <div class="guess-zone">
+            <p class="tagline">Guess the mystery compound.</p>
+
+            <div class="hint-card">
+                <span class="hint-label">Hint</span>
+                <p id="hintText" class="hint-text"></p>
+            </div>
 
             <div class="guess-input-row">
                 <input
@@ -41,19 +44,17 @@
                 <span><span class="legend-dot close"></span> Close</span>
                 <span><span class="legend-dot miss"></span> No match</span>
             </div>
+        </div>
 
-            <div id="guessHistory" class="guess-history"></div>
-        </section>
-
-        <section id="roundEndPanel" class="round-end-panel" hidden>
-            <div id="roundEndContent"></div>
-            <button id="playAgainBtn" class="primary">Play again</button>
-        </section>
+        <div id="guessHistory" class="guess-feed"></div>
     </main>
 
-    <footer>
-        <p>Powered by the Simple Compound Element API &middot; CompoundGuessr v1.0.0</p>
-    </footer>
+    <div id="roundEndPanel" class="round-end-panel" hidden>
+        <div class="round-card">
+            <div id="roundEndContent"></div>
+            <button id="playAgainBtn" class="primary">Play again</button>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>

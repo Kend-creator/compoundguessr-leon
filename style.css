@@ -18,6 +18,8 @@
 
     --font-display: "Archivo Narrow", "Segoe UI", Arial, sans-serif;
     --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+
+    --topbar-h: 56px;
 }
 
 * {
@@ -31,64 +33,106 @@
     }
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: var(--font-body);
     margin: 0;
     background: var(--bg);
     color: var(--text);
     line-height: 1.5;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ---------------------------------------------
-   Header
+   Topbar — slim scoreboard strip, not a hero header
 --------------------------------------------- */
-header {
-    padding: 44px 20px 30px;
-    border-bottom: 1px solid var(--line);
-}
-
-.header-inner {
-    max-width: 640px;
-    margin: 0 auto;
-}
-
-header h1 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: 2.6em;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
-}
-
-.title-accent {
-    color: var(--close);
-}
-
-.subtitle {
-    margin: 8px 0 0;
-    color: var(--text-dim);
-    font-size: 0.98em;
-}
-
-/* ---------------------------------------------
-   Layout
---------------------------------------------- */
-main {
-    max-width: 640px;
-    margin: 36px auto;
+.topbar {
+    height: var(--topbar-h);
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 20px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+}
+
+.topbar-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.15em;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+}
+
+.topbar-counter {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1em;
+    color: var(--close);
 }
 
 /* ---------------------------------------------
-   Guess panel
+   Stage — fills remaining viewport, scrolls internally
 --------------------------------------------- */
-.guesses-left {
+.stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    overflow: hidden;
+}
+
+/* ---------------------------------------------
+   Guess zone — the dominant focal block
+--------------------------------------------- */
+.guess-zone {
+    flex: 0 0 auto;
+    padding: 36px 0 22px;
+}
+
+.tagline {
     font-family: var(--font-display);
-    font-size: 1.1em;
+    font-size: 1.5em;
     font-weight: 700;
-    margin-bottom: 16px;
+    margin: 0 0 18px;
+}
+
+/* ---------------------------------------------
+   Hint card
+--------------------------------------------- */
+.hint-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--close);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+}
+
+.hint-label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.7em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--close);
+    margin-bottom: 4px;
+}
+
+.hint-text {
+    margin: 0;
+    font-size: 0.95em;
+    line-height: 1.5;
 }
 
 .guess-input-row {
@@ -98,8 +142,8 @@ main {
 
 #guessInput {
     flex: 1;
-    padding: 13px 14px;
-    font-size: 15px;
+    padding: 16px 16px;
+    font-size: 17px;
     font-family: var(--font-body);
     border: 1px solid var(--line);
     border-radius: 4px;
@@ -118,11 +162,12 @@ button:focus-visible {
 }
 
 button {
-    padding: 13px 22px;
+    padding: 16px 24px;
     border: none;
     border-radius: 4px;
     font-family: var(--font-body);
     font-weight: 600;
+    font-size: 15px;
     cursor: pointer;
     background: var(--close);
     color: #1a1508;
@@ -137,7 +182,7 @@ button.primary {
     background: var(--hit);
     color: #0e1c0f;
     font-size: 1.02em;
-    padding: 14px 24px;
+    padding: 14px 26px;
 }
 
 button.primary:hover {
@@ -154,7 +199,7 @@ button.primary:hover {
 .clue-legend {
     display: flex;
     gap: 18px;
-    margin: 20px 0 18px;
+    margin-top: 18px;
     font-size: 0.82em;
     color: var(--text-dim);
 }
@@ -177,41 +222,51 @@ button.primary:hover {
 .legend-dot.miss { background: var(--miss); }
 
 /* ---------------------------------------------
-   Guess history
+   Guess feed — scrolls independently, anchored
+   to the bottom of the stage like a live log
 --------------------------------------------- */
-.guess-history {
+.guess-feed {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding-bottom: 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
 }
 
 .guess-row {
     background: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 5px;
-    padding: 14px 16px;
+    border-left: 3px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 14px;
+    flex: 0 0 auto;
 }
 
 .guess-row-name {
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
+    font-size: 0.92em;
 }
 
 .clue-tiles {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    gap: 7px;
 }
 
 .clue-tile {
-    padding: 10px 8px;
+    padding: 8px 6px;
     border-radius: 4px;
     text-align: center;
 }
 
 .clue-tile .clue-label {
     display: block;
-    font-size: 0.68em;
+    font-size: 0.65em;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     opacity: 0.75;
@@ -221,7 +276,7 @@ button.primary:hover {
 .clue-tile .clue-value {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.95em;
+    font-size: 0.92em;
 }
 
 .clue-tile.hit { background: var(--hit-bg); color: var(--hit); }
@@ -229,14 +284,33 @@ button.primary:hover {
 .clue-tile.miss { background: var(--miss-bg); color: var(--text-dim); }
 
 /* ---------------------------------------------
-   Round end panel
+   Round-end overlay
+   NOTE: display is set only via :not([hidden]),
+   never unconditionally — otherwise the native
+   [hidden] attribute would be overridden by this
+   stylesheet and the panel would never hide.
 --------------------------------------------- */
 .round-end-panel {
-    margin-top: 28px;
-    background: var(--panel);
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 16, 20, 0.86);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+}
+
+.round-end-panel:not([hidden]) {
+    display: flex;
+}
+
+.round-card {
+    background: var(--panel-2);
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 28px;
+    padding: 30px;
+    max-width: 420px;
+    width: 100%;
     text-align: center;
 }
 
@@ -244,33 +318,21 @@ button.primary:hover {
     font-family: var(--font-display);
     font-size: 1.6em;
     font-weight: 700;
-    margin-bottom: 6px;
+    margin: 0 0 8px;
 }
 
 .round-end-title.win { color: var(--hit); }
 .round-end-title.lose { color: #d9695a; }
 
 .round-end-formula {
-    font-size: 1.3em;
+    font-size: 1.25em;
     font-weight: 600;
     margin-bottom: 4px;
 }
 
 .round-end-description {
     color: var(--text-dim);
-    font-size: 0.92em;
-    margin: 10px 0 20px;
+    font-size: 0.9em;
+    margin: 10px 0 22px;
     line-height: 1.5;
-}
-
-/* ---------------------------------------------
-   Footer
---------------------------------------------- */
-footer {
-    text-align: center;
-    padding: 30px 20px;
-    color: var(--text-dim);
-    font-size: 0.82em;
-    border-top: 1px solid var(--line);
-    margin-top: 40px;
 }
